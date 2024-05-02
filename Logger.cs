@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace Log
 {
-    public static class Logger
+    public class Logger
     {
         /** Перечисление уровней логирования */
         public enum Level
@@ -24,30 +24,45 @@ namespace Log
             CONSOLE_FILE
         }
     // Переменные
+
+        /** приватное статическое поле, которое будет хранить единственный экземпляр класса Logger */
+        private static Logger instance;
+        /**  свойство, которое позволяет получить доступ к этому единственному экземпляру.*/
+        public static Logger Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new Logger();
+                }
+                return instance;
+            }
+        }
         /** Поле названия проекта */
         private static string fileName = System.Reflection.Assembly.GetEntryAssembly().GetName().Name;
         /** Поле текущей даты для генерации новых файлов */
         static string dateTimeNow = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
 
         /** Поле хранит текущий уровень логирования. По умолчанию TRACE */
-        private static Level lvl = Level.TRACE;
+        private  Level lvl = Level.TRACE;
         /** Поле режима введения логов. По умолчанию CONSOLE */
-        private static Mode mode = Mode.CONSOLE;
+        private  Mode mode = Mode.CONSOLE;
 
         /** Хранение режима ведения журнала логов(Раздельно\вместе). По умолчанию - false */
-        private static bool separateLogging = false;
+        private  bool separateLogging = false;
         /** Поле содержит информацию о необходимости генерации новы файлов при каждом запуске программы. По умолчанию - false */
-        private static bool newFileName = false;
+        private  bool newFileName = false;
 
     //Свойства
         /** Установление или получение текущего уровня логирования*/
-        public static Level level
+        public Level level
         {
             get { return lvl; }
             set { lvl = value; }
         }
         /** Установление или получение режима ведения логов*/
-        public static Mode Writemode
+        public Mode Writemode
         {
             get { return mode; }
             set { mode = value; }
@@ -59,13 +74,13 @@ namespace Log
             set { fileName = value; }
         }
         /** Установление или получение опции введения раздельного введения логов*/
-        public static bool SeparateLogging
+        public bool SeparateLogging
         {
             get { return separateLogging; }
             set { separateLogging = value; }
         }
         /** Установление или получение сведений о необходимости генерации новых имен файлов для каждого запуска программы*/
-        public static bool NewFile
+        public bool NewFile
         {
             get { return newFileName; }
             set { newFileName = value; }
@@ -79,7 +94,7 @@ namespace Log
          * @param member - ссылка на название функции, откуда был совершен вызов
          * @param line - ссылка на номер строки программы, откуда был совершен вызов
          */
-        private static void WriteData(Level levelMesage, ref string message, ref string filePath, ref string member, ref int line)
+        private  void WriteData(Level levelMesage, ref string message, ref string filePath, ref string member, ref int line)
         {
             /** Вывоод логов соглассно установленному минимальному уровню*/
             if (levelMesage < lvl)
@@ -132,7 +147,7 @@ namespace Log
             * @param member - Функция, откуда совершен вызов.
             * @param line - Строка программы, откуда совершен вызов.
          */
-        public static void LOGT(string message, 
+        public  void LOGT(string message, 
                         [CallerFilePath] string filePath = "",
                         [CallerMemberName] string member = "",
                         [CallerLineNumber] int line = 0)
@@ -140,7 +155,7 @@ namespace Log
             WriteData(Level.TRACE, ref message, ref filePath, ref member, ref line);
         }
 
-        public static void LOGD(string message, 
+        public  void LOGD(string message, 
                         [CallerFilePath] string filePath = "",
                         [CallerMemberName] string member = "",
                         [CallerLineNumber] int line = 0)
@@ -148,21 +163,21 @@ namespace Log
             WriteData(Level.DEBUG, ref message, ref filePath, ref member, ref line);
         }
 
-        public static void LOGI(string message, 
+        public  void LOGI(string message, 
                         [CallerFilePath] string filePath = "",
                         [CallerMemberName] string member = "",
                         [CallerLineNumber] int line = 0)
         {
             WriteData(Level.INFO, ref message, ref filePath, ref member, ref line);
         }
-        public static void LOGW(string message, 
+        public  void LOGW(string message, 
                         [CallerFilePath] string filePath = "",
                         [CallerMemberName] string member = "",
                         [CallerLineNumber] int line = 0)
         {
             WriteData(Level.WARN, ref message, ref filePath, ref member, ref line);
         }
-        public static void LOGE(string message, 
+        public  void LOGE(string message, 
                         [CallerFilePath] string filePath = "",
                         [CallerMemberName] string member = "",
                         [CallerLineNumber] int line = 0)
